@@ -1,0 +1,115 @@
+Date 17-02-25
+
+Use Case
+
+
+ Aim :
+
+
+To develop a machine learning system that detects fraudulent online financial transactions by integrating preprocessing, classification, clustering, perceptron-based neural networks, hyperparameter tuning, real-time inference, and visualization.
+
+ Algorithm Steps:
+
+
+Data Preprocessing
+
+Remove duplicate records
+
+Handle missing values (e.g., imputation)
+
+Normalize transaction amounts using MinMaxScaler or StandardScaler
+
+Clustering (Unsupervised)
+
+Apply KMeans or DBSCAN to group transactions
+
+Identify outliers or anomalous clusters
+
+Classification (Supervised)
+
+Use models like Logistic Regression, Random Forest, or SVM
+
+Train on labeled data to predict fraud (binary classification)
+
+Perceptron Model
+
+Implement a basic neural network using sklearn or keras
+
+Use binary cross-entropy loss for fraud detection
+
+Hyperparameter Tuning
+
+Use GridSearchCV or RandomizedSearchCV
+
+Optimize parameters like learning rate, number of neurons, depth, etc.
+
+Inference
+
+Deploy model to flag suspicious transactions in real time
+
+Use thresholds or probability scores for decision-making
+
+Visualization
+
+Create dashboards using matplotlib, seaborn, or plotly
+
+Display fraud patterns, cluster distributions, and model performance
+
+
+
+ Output :
+
+A trained ML model that classifies transactions as fraudulent or legitimate
+
+Cluster maps showing anomalous behavior
+
+Real-time alerts for suspicious transactions
+
+Visual dashboards for monitoring fraud trends
+
+
+
+Python Program (Simplified):
+
+python
+import pandas as pd
+from sklearn.preprocessing import StandardScaler
+from sklearn.cluster import KMeans
+from sklearn.linear_model import Perceptron
+from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.metrics import classification_report
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Load dataset
+df = pd.read_csv("transactions.csv")
+
+# Preprocessing
+df.drop_duplicates(inplace=True)
+df.fillna(df.mean(), inplace=True)
+scaler = StandardScaler()
+df['amount_scaled'] = scaler.fit_transform(df[['amount']])
+
+# Clustering
+kmeans = KMeans(n_clusters=3, random_state=42)
+df['cluster'] = kmeans.fit_predict(df[['amount_scaled']])
+
+# Classification
+X = df[['amount_scaled', 'step']]  # Features
+y = df['isFraud']  # Target
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+# Perceptron Model
+perceptron = Perceptron()
+params = {'penalty': ['l2', 'l1'], 'max_iter': [1000, 2000]}
+grid = GridSearchCV(perceptron, params, cv=5)
+grid.fit(X_train, y_train)
+
+# Inference
+y_pred = grid.predict(X_test)
+print(classification_report(y_test, y_pred))
+
+# Visualization
+sns.countplot(x='cluster', hue='isFraud', data=df)
+plt.title("Fraud Distribution Across Clusters")
+plt.show()
